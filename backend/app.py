@@ -1,15 +1,18 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from dotenv import load_dotenv
 import whisper
 import os
 import anthropic
-
+import json
+from flask_cors import CORS
 load_dotenv()
 
 ffmpeg_path = os.getenv("FFMPEG_PATH", "")
 if ffmpeg_path:
     os.environ["PATH"] += os.pathsep + ffmpeg_path
+
 app = Flask(__name__)
+CORS(app)
 model = whisper.load_model("base")
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 system_prompt = """
@@ -41,17 +44,16 @@ def transcribe():
 def chat_endpoint():
     data = request.json
     messages = data["messages"]
-
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=1000,
-        system=system_prompt,
-        messages=messages
-    )
-
-    reply = response.content[0].text
-    return jsonify({"reply": reply})
-
+    def generate():
+        with client.messages.stream(
+            model="claude-sonnet-4-6",
+            max_tokens=1000,
+            system=system_prompt,
+            messages=messages
+        ) as stream:
+            for text in stream.text_stream:
+                yield f"data: {json.dumps({'text': text})}\n\n"
+    return Response(generate(), mimetype="text/event-stream")
 
 if __name__ == "__main__":
     app.run(debug=True)
