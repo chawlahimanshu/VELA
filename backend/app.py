@@ -6,9 +6,9 @@ import anthropic
 
 load_dotenv()
 
-# Tell Whisper exactly where ffmpeg is
-os.environ["PATH"] += os.pathsep + r"C:\Users\Himanshu\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1.1-full_build\bin"
-
+ffmpeg_path = os.getenv("FFMPEG_PATH", "")
+if ffmpeg_path:
+    os.environ["PATH"] += os.pathsep + ffmpeg_path
 app = Flask(__name__)
 model = whisper.load_model("base")
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
