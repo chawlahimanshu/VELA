@@ -1,0 +1,9 @@
+flask
+flask-cors
+flask-socketio
+anthropic
+deepgram-sdk==3.7.7
+python-dotenv
+python-engineio
+python-socketio
+eventlet
