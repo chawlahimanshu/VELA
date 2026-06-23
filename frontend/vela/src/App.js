@@ -1,15 +1,19 @@
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import Settings from './Settings';
 
 const socket = io("http://localhost:5000");
 
-function App() {
+function MainPage() {
   const [transcript, setTranscript] = useState([])
   const [suggestion, setSuggestion] = useState("")
+  const navigate = useNavigate()
+
   const resetCall = () => {
-  setTranscript([])
-  setSuggestion("")
-}
+    setTranscript([])
+    setSuggestion("")
+  }
 
   useEffect(() => {
     socket.on("live_transcript", (data) => {
@@ -27,11 +31,15 @@ function App() {
 
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto", padding: "20px", fontFamily: "sans-serif" }}>
-      <h1 style={{ textAlign: "center", color: "#1a1a2e" }}>VELA</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h1 style={{ color: "#1a1a2e" }}>VELA</h1>
+        <button onClick={() => navigate('/settings')} style={{ padding: "8px 16px", backgroundColor: "#1a1a2e", color: "white", border: "none", borderRadius: "8px", cursor: "pointer" }}>
+          ⚙️ Settings
+        </button>
+      </div>
       <p style={{ textAlign: "center", color: "#666" }}>Voice Enabled Life Agent</p>
 
       <div style={{ display: "flex", gap: "20px", marginTop: "30px" }}>
-
         <div style={{ flex: 1 }}>
           <h3>Live Transcript</h3>
           <div style={{ height: "400px", overflowY: "auto", padding: "15px", backgroundColor: "#f9f9f9", borderRadius: "8px", border: "1px solid #ddd" }}>
@@ -52,9 +60,17 @@ function App() {
             New Client
           </button>
         </div>
-
       </div>
     </div>
+  )
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<MainPage />} />
+      <Route path="/settings" element={<Settings />} />
+    </Routes>
   )
 }
 
