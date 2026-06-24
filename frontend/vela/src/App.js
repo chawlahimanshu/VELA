@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Settings from './Settings';
+import Login from './Login';
+import Landing from './Landing';
+
 
 const socket = io("http://localhost:5000");
 
@@ -70,6 +73,8 @@ function App() {
     <Routes>
       <Route path="/" element={<MainPage />} />
       <Route path="/settings" element={<Settings />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/Landing" element={<Landing />} />
     </Routes>
   )
 }
