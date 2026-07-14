@@ -5,3 +5,4 @@ __pycache__/
 temp_audio.wav
 test_audio.mp3
 node_modules/
+firebase-admin.json
